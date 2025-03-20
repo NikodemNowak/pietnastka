@@ -16,6 +16,7 @@ def bfs(order, board, rows, cols):
         temporary_bfs(order, b, rows, cols)
 
     print("dlugosc visited: " + str(len(visited)))
+    print("dlugosc all_layer_states: " + str(all_layer_states.qsize()))
 
 def temporary_bfs(order, board, rows, cols):
     x = where_zero(board)
@@ -28,9 +29,6 @@ def temporary_bfs(order, board, rows, cols):
     # Posortuje możliwe ruchy zgodnie z order
     board_moves = sorted(board_moves, key=lambda z: order.index(z))
 
-    # for letter in order:
-    #     if letter in layer_moves:
-    #         print(letter)
 
     for move in board_moves:
         if move == 'L':
@@ -42,14 +40,12 @@ def temporary_bfs(order, board, rows, cols):
         elif move == 'D':
             new_board = move_down(board)
 
-        # print(new_board)
-        # print(hash_board(new_board))
-        # print(check_board(new_board))
-        # print(where_zero(new_board))
 
         if is_in_set(hash_board(new_board)):
             all_layer_states.put(new_board)
             print("New board added to queue: " + str(new_board))
+
+    # A CO JAK NIC NIE ZNAJDZIE?
 
 def check_possible_move(x, last_step, width, height, layer_moves):
     if left_ok(x, last_step, width):
@@ -104,8 +100,6 @@ def down_ok(x, last_step, width, height):
 def is_in_set(hash_param):
     if hash_param not in visited:
         visited.add(hash_param)
-        # print(str(hash_param) + " added to set")
         return True
     else:
-        # print(str(hash_param) + " already in set")
         return False
