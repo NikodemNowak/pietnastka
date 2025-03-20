@@ -5,11 +5,11 @@ from board import *
 visited = set()
 all_layer_states = Queue()
 
-def bfs(order, board, rows, cols):
+def bfs(order, board_dict, rows, cols):
 
-    is_in_set(hash(board))
+    is_in_set(hash(next(iter(board_dict.keys()))))
 
-    temporary_bfs(order, board, rows, cols)
+    temporary_bfs(order, board_dict, rows, cols)
 
     while not all_layer_states.empty():
         b = all_layer_states.get()
@@ -18,10 +18,10 @@ def bfs(order, board, rows, cols):
     print("dlugosc visited: " + str(len(visited)))
     print("dlugosc all_layer_states: " + str(all_layer_states.qsize()))
 
-def temporary_bfs(order, board, rows, cols):
-    x = where_zero(board)
+def temporary_bfs(order, board_dict, rows, cols):
+    x = where_zero(next(iter(board_dict.keys())))
     board_moves = []
-    last_step = -1
+    last_step = list(board_dict.values())[0][-1] #Pobiera ostatni znak z pierwszej wartości w słowniku
 
     # Które ruchy są możliwe
     check_possible_move(x, last_step, cols, rows, board_moves)
@@ -32,18 +32,23 @@ def temporary_bfs(order, board, rows, cols):
 
     for move in board_moves:
         if move == 'L':
-            new_board = move_left(board)
+            new_board, new_step = move_left(next(iter(board_dict.keys())))
+            new_board_dict = {new_board : last_step + str(new_step)}
+
         elif move == 'U':
-            new_board = move_up(board)
+            new_board, new_step = move_up(next(iter(board_dict.keys())))
+            new_board_dict = {new_board: last_step + str(new_step)}
         elif move == 'R':
-            new_board = move_right(board)
+            new_board, new_step = move_right(next(iter(board_dict.keys())))
+            new_board_dict = {new_board: last_step + str(new_step)}
         elif move == 'D':
-            new_board = move_down(board)
+            new_board, new_step = move_down(next(iter(board_dict.keys())))
+            new_board_dict = {new_board: last_step + str(new_step)}
 
 
-        if is_in_set(hash_board(new_board)):
-            all_layer_states.put(new_board)
-            print("New board added to queue: " + str(new_board))
+        if is_in_set(hash_board(next(iter(new_board_dict.keys())))):
+            all_layer_states.put(new_board_dict)
+            print("New board added to queue: " + str(next(iter(new_board_dict.keys()))) + " with steps: " + str(list(board_dict.values())[0]))
 
     # A CO JAK NIC NIE ZNAJDZIE?
 

@@ -47,22 +47,22 @@ def move_left(board):
     x = where_zero(board)
     temp_board = list(board)
     temp_board[x], temp_board[x-1] = board[x-1], board[x]
-    return tuple(temp_board)
+    return tuple(temp_board), 9
 
 def move_right(board):
     x = where_zero(board)
     temp_board = list(board)
     temp_board[x], temp_board[x+1] = board[x+1], board[x]
-    return tuple(temp_board)
+    return tuple(temp_board), 3
 
 def move_up(board):
     x = where_zero(board)
     temp_board = list(board)
     temp_board[x], temp_board[x-cols] = board[x-cols], board[x]
-    return tuple(temp_board)
+    return tuple(temp_board), 12
 
 def move_down(board):
     x = where_zero(board)
     temp_board = list(board)
     temp_board[x], temp_board[x+cols] = board[x+cols], board[x]
-    return tuple(temp_board)
+    return tuple(temp_board), 6
