@@ -21,7 +21,8 @@ def bfs(order, board_dict, rows, cols):
 def temporary_bfs(order, board_dict, rows, cols):
     x = where_zero(next(iter(board_dict.keys())))
     board_moves = []
-    last_step = list(board_dict.values())[0][-1] #Pobiera ostatni znak z pierwszej wartości w słowniku
+    value = list(board_dict.values())[0]  # Pobranie pierwszej wartości słownika
+    last_step = value[-2:] if value[-1] == '2' else value[-1] # Pobranie 2 lub 1 znaków
 
     # Które ruchy są możliwe
     check_possible_move(x, last_step, cols, rows, board_moves)
@@ -67,7 +68,7 @@ def check_possible_move(x, last_step, width, height, layer_moves):
     return layer_moves
 
 def left_ok(x, last_step, width):
-    if last_step == 3:
+    if last_step == '3':
         return False
 
     if x % width == 0:
@@ -76,7 +77,7 @@ def left_ok(x, last_step, width):
     return True
 
 def up_ok(x, last_step, width):
-    if last_step == 6:
+    if last_step == '6':
         return False
 
     if x < width:
@@ -85,7 +86,7 @@ def up_ok(x, last_step, width):
     return True
 
 def right_ok(x, last_step, width):
-    if last_step == 9:
+    if last_step == '9':
         return False
 
     if x % width == width - 1:
@@ -94,7 +95,7 @@ def right_ok(x, last_step, width):
     return True
 
 def down_ok(x, last_step, width, height):
-    if last_step == 12:
+    if last_step == '12':
         return False
 
     if x >= (width - 1) * height:
