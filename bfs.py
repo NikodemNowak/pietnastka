@@ -3,22 +3,22 @@ import time
 
 from board import *
 
-visited = set()
-all_layer_states = Queue()
+visited_bfs = set()
+all_layer_states_bfs = Queue()
 
 def bfs(order, board_dict, rows, cols, start_time):
 
-    is_in_set(hash(next(iter(board_dict.keys()))))
+    is_in_set(hash(next(iter(board_dict.keys()))), visited_bfs)
 
     temporary_bfs(order, board_dict, rows, cols)
 
-    while not all_layer_states.empty():
-        b = all_layer_states.get()
+    while not all_layer_states_bfs.empty():
+        b = all_layer_states_bfs.get()
 
         if check_board(next(iter(b.keys()))) == 0:
             print("Znaleziono rozwiazanie: " + str(next(iter(b.keys()))) + " z krokiem: " + str(list(b.values())[0][1:]))
             print("Ilosc krokow: " + str(len(list(b.values())[0]) - 1))
-            print("Ilosc odwiedzonych stanow: " + str(len(visited)))
+            print("Ilosc odwiedzonych stanow: " + str(len(visited_bfs)))
             print("Czas wykonania: " + str(time.time() - start_time) + " sekund")
             break
 
@@ -55,63 +55,6 @@ def temporary_bfs(order, board_dict, rows, cols):
             new_board_dict = {new_board: ''.join(list(board_dict.values())) + str(new_step)}
 
 
-        if is_in_set(hash_board(next(iter(new_board_dict.keys())))):
-            all_layer_states.put(new_board_dict)
+        if is_in_set(hash_board(next(iter(new_board_dict.keys()))), visited_bfs):
+            all_layer_states_bfs.put(new_board_dict)
             #print("New board added to queue: " + str(next(iter(new_board_dict.keys()))) + " with steps: " + str(list(new_board_dict.values())[0]))
-
-def check_possible_move(x, last_step, width, height, layer_moves):
-    if left_ok(x, last_step, width):
-        layer_moves.append('L')
-
-    if up_ok(x, last_step, width):
-        layer_moves.append('U')
-
-    if right_ok(x, last_step, width):
-        layer_moves.append('R')
-
-    if down_ok(x, last_step, width, height):
-        layer_moves.append('D')
-    return layer_moves
-
-def left_ok(x, last_step, width):
-    if last_step == 'R':
-        return False
-
-    if x % width == 0:
-        return False
-
-    return True
-
-def up_ok(x, last_step, width):
-    if last_step == 'D':
-        return False
-
-    if x < width:
-        return False
-
-    return True
-
-def right_ok(x, last_step, width):
-    if last_step == 'L':
-        return False
-
-    if x % width == width - 1:
-        return False
-
-    return True
-
-def down_ok(x, last_step, width, height):
-    if last_step == 'U':
-        return False
-
-    if x >= (width - 1) * height:
-        return False
-
-    return True
-
-def is_in_set(hash_param):
-    if hash_param not in visited:
-        visited.add(hash_param)
-        return True
-    else:
-        return False
