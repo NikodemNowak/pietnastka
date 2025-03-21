@@ -1,6 +1,3 @@
-import hashlib as hl
-import copy as cp
-
 f = open("plansza.txt", "r")
 rows, cols = map(int, f.readline().split())
 
