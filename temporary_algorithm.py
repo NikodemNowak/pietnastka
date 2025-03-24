@@ -6,6 +6,10 @@ def temporary_alghorithm(order, board_dict, rows, cols, algorithm_structure, alg
     x = where_zero(next(iter(board_dict.keys())))
     board_moves = []
     all_steps = list(board_dict.values())[0]  # Pobranie pierwszej wartości słownika
+
+    # len - 1, bo all_steps zawiera krok 0 czyli poczatkowa plansze
+    if len(all_steps) - 1 == 20:
+        return
     last_step = all_steps[-1]  # Pobranie ostatniego znaku
 
     # Które ruchy są możliwe
