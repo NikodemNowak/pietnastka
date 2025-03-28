@@ -4,23 +4,28 @@ from temporary_algorithm import *
 def hamming_distance(board):
     return check_board(board)
 
+
 def manhattan_distance(board):
     distance = 0
-    rows = get_rows()
-    cols = get_cols()
 
-    numbers = generate_final_board()
-    current_pos = [0, 0]
-    for i in range(len(numbers)):
-        for j in range(len(numbers)):
-            if numbers[i] == board[j]:
-                current_pos[0] = j // rows
-                current_pos[1] = j % cols
-                break
-        target_pos = (i-1 // rows, i-1 % cols)
-        distance += abs(current_pos[0] - target_pos[0]) + abs(current_pos[1] - target_pos[1])
+    for i in range(len(board)):
+        if board[i] == 0:  # Pomijamy pusty kafelek
+            continue
+
+        # Aktualna pozycja
+        current_row = i // rows
+        current_col = i % cols
+
+        # Docelowa pozycja dla tej wartości
+        value = board[i]
+        target_row = (value - 1) // rows
+        target_col = (value - 1) % cols
+
+        # Dodajemy odległość Manhattan dla tego kafelka
+        distance += abs(current_row - target_row) + abs(current_col - target_col)
 
     return distance
+
 
 def a_star(heuristics, board_dict, rows, cols, start_time):
 
