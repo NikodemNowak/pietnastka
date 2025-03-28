@@ -3,7 +3,7 @@ from collections import deque
 from queue import Queue, PriorityQueue
 
 
-def temporary_alghorithm(order_or_heuristic, board_dict, rows, cols, algorithm_structure, algorithm_visited):
+def temporary_alghorithm(order_or_heuristic, board_dict, rows, cols, algorithm_structure, algorithm_visited, additional_counter):
     x = where_zero(next(iter(board_dict.keys())))
     board_moves = []
     all_steps = list(board_dict.values())[0]  # Pobranie pierwszej wartości słownika
@@ -21,6 +21,7 @@ def temporary_alghorithm(order_or_heuristic, board_dict, rows, cols, algorithm_s
         board_moves = sorted(board_moves, key=lambda z: order_or_heuristic.index(z))
 
 
+
     for move in board_moves:
         if move == 'L':
             new_board, new_step = move_left(next(iter(board_dict.keys())))
@@ -35,7 +36,8 @@ def temporary_alghorithm(order_or_heuristic, board_dict, rows, cols, algorithm_s
 
         if is_in_set(hash_board(next(iter(new_board_dict.keys()))), algorithm_visited):
             if isinstance(algorithm_structure, PriorityQueue):  # Kolejka z priorytetem (A*)
-                algorithm_structure.put((order_or_heuristic(new_board), new_board_dict))
+                algorithm_structure.put((order_or_heuristic(new_board), additional_counter[0], new_board_dict))
+                additional_counter[0] += 1
             elif isinstance(algorithm_structure, Queue):  # Kolejka (BFS)
                 algorithm_structure.put(new_board_dict)
             elif isinstance(algorithm_structure, deque):  # Stos (DFS)

@@ -1,5 +1,4 @@
 import time
-
 from temporary_algorithm import *
 from board import *
 
@@ -11,7 +10,7 @@ def bfs(order, board_dict, rows, cols, start_time):
 
     is_in_set(hash(next(iter(board_dict.keys()))), visited_bfs)
 
-    temporary_alghorithm(order, board_dict, rows, cols, all_layer_states_bfs, visited_bfs)
+    temporary_alghorithm(order, board_dict, rows, cols, all_layer_states_bfs, visited_bfs, 0)
 
     while not all_layer_states_bfs.empty():
         b = all_layer_states_bfs.get()
@@ -26,6 +25,7 @@ def bfs(order, board_dict, rows, cols, start_time):
             print("Czas wykonania: " + str(time.time() - start_time) + " sekund")
             break
 
-        temporary_alghorithm(order, b, rows, cols, all_layer_states_bfs, visited_bfs)
+        temporary_alghorithm(order, b, rows, cols, all_layer_states_bfs, visited_bfs, 0)
+
 
 

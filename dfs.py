@@ -22,5 +22,4 @@ def dfs(order, board_dict, rows, cols, start_time):
             print("Czas wykonania: " + str(time.time() - start_time) + " sekund")
             return
 
-        temporary_alghorithm(order, b, rows, cols, stack, visited_dfs)
-
+        temporary_alghorithm(order, b, rows, cols, stack, visited_dfs, 0)
