@@ -2,12 +2,12 @@ import time
 from temporary_algorithm import *
 from board import *
 
-visited_bfs = set()
-all_layer_states_bfs = Queue()
-processed_bfs = 0
+
 
 def bfs(order, board_dict, rows, cols, start_time):
-
+    visited_bfs = set()
+    all_layer_states_bfs = Queue()
+    processed_bfs = 0
 
     is_in_set(hash(next(iter(board_dict.keys()))), visited_bfs)
 
@@ -15,7 +15,6 @@ def bfs(order, board_dict, rows, cols, start_time):
 
     while not all_layer_states_bfs.empty():
         b = all_layer_states_bfs.get()
-        global processed_bfs
         processed_bfs = processed_bfs + 1
 
         if check_board(next(iter(b.keys()))) == 0:

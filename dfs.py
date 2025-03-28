@@ -2,16 +2,16 @@ from temporary_algorithm import *
 from collections import deque
 import time
 
-visited_dfs = set()
-proccessed_dfs = 0
+
 
 def dfs(order, board_dict, rows, cols, start_time):
     stack = deque() #Stos LIFO
+    visited_dfs = set()
+    proccessed_dfs = 0
     stack.append(board_dict) # Dodaje na koniec kolejki
 
     while stack:
         b = stack.pop() # Usuwa ostatni element z kolejki, czyli ten ostatni dodany
-        global proccessed_dfs
         proccessed_dfs = proccessed_dfs + 1
 
         if check_board(next(iter(b.keys()))) == 0:
