@@ -8,6 +8,7 @@ processed_bfs = 0
 
 def bfs(order, board_dict, rows, cols, start_time):
 
+
     is_in_set(hash(next(iter(board_dict.keys()))), visited_bfs)
 
     temporary_alghorithm(order, board_dict, rows, cols, all_layer_states_bfs, visited_bfs, 0)
