@@ -1,8 +1,9 @@
 from board import *
 from collections import deque
-from queue import Queue
+from queue import Queue, PriorityQueue
 
-def temporary_alghorithm(order, board_dict, rows, cols, algorithm_structure, algorithm_visited):
+
+def temporary_alghorithm(order_or_heuristic, board_dict, rows, cols, algorithm_structure, algorithm_visited):
     x = where_zero(next(iter(board_dict.keys())))
     board_moves = []
     all_steps = list(board_dict.values())[0]  # Pobranie pierwszej wartości słownika
@@ -15,8 +16,9 @@ def temporary_alghorithm(order, board_dict, rows, cols, algorithm_structure, alg
     # Które ruchy są możliwe
     check_possible_move(x, last_step, cols, rows, board_moves)
 
-    # Posortuje możliwe ruchy zgodnie z order
-    board_moves = sorted(board_moves, key=lambda z: order.index(z))
+    if isinstance(order_or_heuristic, str):
+        # Posortuje możliwe ruchy zgodnie z order
+        board_moves = sorted(board_moves, key=lambda z: order_or_heuristic.index(z))
 
 
     for move in board_moves:
@@ -32,7 +34,9 @@ def temporary_alghorithm(order, board_dict, rows, cols, algorithm_structure, alg
         new_board_dict = {new_board: ''.join(list(board_dict.values())) + str(new_step)}
 
         if is_in_set(hash_board(next(iter(new_board_dict.keys()))), algorithm_visited):
-            if isinstance(algorithm_structure, Queue):  # Kolejka (BFS)
+            if isinstance(algorithm_structure, PriorityQueue):  # Kolejka z priorytetem (A*)
+                algorithm_structure.put((order_or_heuristic(new_board), new_board_dict))
+            elif isinstance(algorithm_structure, Queue):  # Kolejka (BFS)
                 algorithm_structure.put(new_board_dict)
             elif isinstance(algorithm_structure, deque):  # Stos (DFS)
                 algorithm_structure.append(new_board_dict)
