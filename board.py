@@ -1,11 +1,6 @@
 f = open("plansza.txt", "r")
 rows, cols = map(int, f.readline().split())
 
-def get_rows():
-    return rows
-def get_cols():
-    return cols
-
 # Wczytuje planszę z pliku
 def load_board():
     arr = []

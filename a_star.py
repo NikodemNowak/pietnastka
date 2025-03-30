@@ -29,12 +29,14 @@ def manhattan_distance(board):
 
 def a_star(heuristics, board_dict, rows, cols, start_time):
 
-    processed_a_star = 0
     queue_a_star = PriorityQueue()
     visited_a_star = set()
-
+    processed_a_star = 0
     additional_counter = [0] # Aby było mutowalne
-    queue_a_star.put((heuristics(next(iter(board_dict.keys()))), additional_counter[0], board_dict))  # Dodaje do kolejki z priorytetem
+
+    priority = heuristics(next(iter(board_dict.keys()))) + len(list(board_dict.values())[0]) - 1
+
+    queue_a_star.put((priority, additional_counter[0], board_dict))  # Dodaje do kolejki z priorytetem
     additional_counter[0] += 1
 
     while not queue_a_star.empty():
