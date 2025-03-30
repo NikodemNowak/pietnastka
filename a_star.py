@@ -1,5 +1,5 @@
-import time
 from temporary_algorithm import *
+from board import *
 
 def hamming_distance(board):
     return check_board(board)
@@ -7,6 +7,8 @@ def hamming_distance(board):
 
 def manhattan_distance(board):
     distance = 0
+    rows = get_rows()
+    cols = get_cols()
 
     for i in range(len(board)):
         if board[i] == 0:  # Pomijamy pusty kafelek
@@ -33,6 +35,8 @@ def a_star(heuristics, board_dict, start_time):
     visited_a_star = set()
     processed_a_star = 0
     additional_counter = [0] # Aby było mutowalne
+    max_depth = 20
+    max_processed_depth = 0
 
     priority = heuristics(next(iter(board_dict.keys()))) + len(list(board_dict.values())[0]) - 1
 
@@ -42,20 +46,16 @@ def a_star(heuristics, board_dict, start_time):
     while not queue_a_star.empty():
 
         prio, _, b = queue_a_star.get()  # SYPIE BŁĘDEM, BO JAK HEURYSTYKA DA TO SAMO TO NIE UMIE POSOROTWAĆ
-        processed_a_star = processed_a_star + 1
+        processed_a_star += 1
+
+        current_depth = len(list(b.values())[0]) - 1
+        if current_depth > max_processed_depth:
+            max_processed_depth = current_depth
 
         if check_board(next(iter(b.keys()))) == 0:
-            print("Znaleziono rozwiązanie: " + str(next(iter(b.keys()))) + " z krokiem: " + str(list(b.values())[0][1:]))
-            print("Ilość kroków: " + str(len(list(b.values())[0]) - 1))
-            print("Ilość odwiedzonych stanów: " + str(len(visited_a_star)))
-            print("Ilość przetworzonych stanów: " + str(processed_a_star))
-            print("Czas wykonania: " + str(time.time() - start_time) + " sekund")
-            return
+            return True, str(next(iter(b.keys()))), str(list(b.values())[0][1:]), visited_a_star, processed_a_star, max_processed_depth, start_time
 
         temporary_alghorithm(heuristics, b, queue_a_star, visited_a_star,additional_counter)
 
-    if queue_a_star.empty():
-        print("Nie znaleziono rozwiązania")
-        print("Ilość odwiedzonych stanów: " + str(len(visited_a_star)))
-        print("Ilość przetworzonych stanów: " + str(processed_a_star))
-        print("Czas wykonania: " + str(time.time() - start_time) + " sekund")
+
+    return False, '', '-1', visited_a_star, processed_a_star, max_depth, start_time

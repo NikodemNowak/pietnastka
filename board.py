@@ -1,8 +1,20 @@
-f = open("plansza.txt", "r")
-rows, cols = map(int, f.readline().split())
+import time
+
+f = ''
+rows, cols = 0, 0
+
+def get_rows():
+    return rows
+def get_cols():
+    return cols
 
 # Wczytuje planszę z pliku
-def load_board():
+def load_board(path):
+    global f
+    global rows
+    global cols
+    f = open(path, "r")
+    rows, cols = map(int, f.readline().split())
     arr = []
 
     for i in range(rows):
@@ -71,57 +83,57 @@ def move_down(board):
     return tuple(temp_board), 'D'
 
 # Sprawdza czy można iść w lewo
-def left_ok(x, last_step, width):
+def left_ok(x, last_step):
     if last_step == 'R':
         return False
 
-    if x % width == 0:
+    if x % cols == 0:
         return False
 
     return True
 
 # Sprawdza czy można iść w górę
-def up_ok(x, last_step, width):
+def up_ok(x, last_step):
     if last_step == 'D':
         return False
 
-    if x < width:
+    if x < cols:
         return False
 
     return True
 
 # Sprawdza czy można iść w prawo
-def right_ok(x, last_step, width):
+def right_ok(x, last_step):
     if last_step == 'L':
         return False
 
-    if x % width == width - 1:
+    if x % cols == cols - 1:
         return False
 
     return True
 
 # Sprawdza czy można iść w dół
-def down_ok(x, last_step, width, height):
+def down_ok(x, last_step):
     if last_step == 'U':
         return False
 
-    if x >= (width - 1) * height:
+    if x >= (cols - 1) * rows:
         return False
 
     return True
 
 # Sprawdza które ruchy są możliwe
-def check_possible_move(x, last_step, width, height, layer_moves):
-    if left_ok(x, last_step, width):
+def check_possible_move(x, last_step, layer_moves):
+    if left_ok(x, last_step):
         layer_moves.append('L')
 
-    if up_ok(x, last_step, width):
+    if up_ok(x, last_step):
         layer_moves.append('U')
 
-    if right_ok(x, last_step, width):
+    if right_ok(x, last_step):
         layer_moves.append('R')
 
-    if down_ok(x, last_step, width, height):
+    if down_ok(x, last_step):
         layer_moves.append('D')
     return layer_moves
 
@@ -132,3 +144,17 @@ def is_in_set(hash_param, visited):
         return True
     else:
         return False
+
+def summary_info(is_ok, final_board, steps, visited, processed, max_processed_depth, start_time):
+    if is_ok:
+        print("Znaleziono rozwiązanie: " + final_board + " z krokiem: " + steps)
+        print("Ilość kroków: " + str(len(steps)))
+    else:
+        print("Nie znaleziono rozwiązania")
+        print("Ilość kroków: " + str(steps))
+
+    print("Ilość odwiedzonych stanów: " + str(len(visited)))
+    print("Ilość przetworzonych stanów: " + str(processed))
+    print("Maksymalna głębokość przetworzonych stanów: " + str(max_processed_depth))
+    print(f"Czas wykonania: {(time.time() - start_time) * 1000:.3f} milisekund")
+    return

@@ -15,16 +15,10 @@ def bfs(order, board_dict, start_time):
         processed_bfs = processed_bfs + 1
 
         if check_board(next(iter(b.keys()))) == 0:
-            summary_info(
-                True,
-                str(next(iter(b.keys()))),
-                str(list(b.values())[0][1:]),
-                visited_bfs,
-                processed_bfs,
-                start_time)
-            break
+            return True, str(next(iter(b.keys()))), str(list(b.values())[0][1:]), visited_bfs, processed_bfs, start_time
 
         temporary_alghorithm(order, b, all_layer_states_bfs, visited_bfs, 0)
 
+    return False, '', '-1', visited_bfs, processed_bfs, start_time
 
 
