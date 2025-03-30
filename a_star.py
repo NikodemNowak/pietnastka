@@ -27,7 +27,7 @@ def manhattan_distance(board):
     return distance
 
 
-def a_star(heuristics, board_dict, rows, cols, start_time):
+def a_star(heuristics, board_dict, start_time):
 
     queue_a_star = PriorityQueue()
     visited_a_star = set()
@@ -52,7 +52,7 @@ def a_star(heuristics, board_dict, rows, cols, start_time):
             print("Czas wykonania: " + str(time.time() - start_time) + " sekund")
             return
 
-        temporary_alghorithm(heuristics, b, rows, cols, queue_a_star, visited_a_star,additional_counter)
+        temporary_alghorithm(heuristics, b, queue_a_star, visited_a_star,additional_counter)
 
     if queue_a_star.empty():
         print("Nie znaleziono rozwiązania")

@@ -3,7 +3,7 @@ from collections import deque
 from queue import Queue, PriorityQueue
 
 
-def temporary_alghorithm(order_or_heuristic, board_dict, rows, cols, algorithm_structure, algorithm_visited, additional_counter):
+def temporary_alghorithm(order_or_heuristic, board_dict, algorithm_structure, algorithm_visited, additional_counter):
     x = where_zero(next(iter(board_dict.keys())))
     board_moves = []
     all_steps = list(board_dict.values())[0]  # Pobranie pierwszej wartości słownika
@@ -14,7 +14,7 @@ def temporary_alghorithm(order_or_heuristic, board_dict, rows, cols, algorithm_s
     last_step = all_steps[-1]  # Pobranie ostatniego znaku
 
     # Które ruchy są możliwe
-    check_possible_move(x, last_step, cols, rows, board_moves)
+    check_possible_move(x, last_step, board_moves)
 
     if isinstance(order_or_heuristic, str):
         # Posortuje możliwe ruchy zgodnie z order
