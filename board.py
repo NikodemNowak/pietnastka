@@ -138,12 +138,34 @@ def check_possible_move(x, last_step, layer_moves):
     return layer_moves
 
 # Sprawdza czy dany stan jest w zbiorze odwiedzonych
-def is_in_set(hash_param, visited):
-    if hash_param not in visited:
-        visited.add(hash_param)
+def is_in_set(dict_param, visited):
+    if dict_param not in visited:
+        visited.add(dict_param)
         return True
     else:
         return False
+
+def add_to_set_dfs(dict_param, visited_chainmap):
+
+    board = list(dict_param.keys())[0]
+    path = dict_param[board]
+
+    # Sprawdza czy dany stan jest w ChainMap
+    if board in visited_chainmap:
+        # Jeśli długość ścieżki jest mniejsza to zamienia
+        if len(path) < len(visited_chainmap[board]):
+            # Musimy znaleźć, w którym słowniku jest plansza
+            for d in visited_chainmap.maps:
+                if board in d:
+                    d[board] = path
+                    break
+            return True
+        else:
+            return False
+    else:
+        # Dodaje nowy stan do pierwszego słownika w ChainMap
+        visited_chainmap.maps[0][board] = path
+        return True
 
 def summary_info(is_ok, final_board, steps, visited, processed, max_processed_depth, time_taken):
     if is_ok:

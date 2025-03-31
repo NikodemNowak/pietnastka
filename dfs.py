@@ -1,18 +1,19 @@
-from temporary_algorithm import *
-from collections import deque
+from temporary_algorithm import temporary_algorithm
+from board import add_to_set_dfs, check_board
+from collections import deque, ChainMap
 
 def dfs(order, board_dict):
-    stack = deque() #Stos LIFO
-    visited_dfs = set()
+    stack = deque()  #Stos LIFO
+    visited_dfs = ChainMap()
     proccessed_dfs = 0
     max_depth = 20
     max_processed_depth = 0
-    is_in_set(hash(next(iter(board_dict.keys()))), visited_dfs)
-    stack.append(board_dict) # Dodaje na koniec kolejki
+    add_to_set_dfs(board_dict, visited_dfs)  # Dodaje do zbioru odwiedzonych
+    stack.append(board_dict)  # Dodaje na koniec kolejki
 
     while stack:
 
-        b = stack.pop() # Usuwa ostatni element z kolejki, czyli ten ostatni dodany
+        b = stack.pop()  # Usuwa ostatni element z kolejki, czyli ten ostatni dodany
 
         current_depth = len(list(b.values())[0]) - 1
         if current_depth > max_processed_depth:
@@ -22,7 +23,8 @@ def dfs(order, board_dict):
 
         # Sprawdza czy dany stan jest poszukiwanym
         if check_board(next(iter(b.keys()))) == 0:
-            return True, str(next(iter(b.keys()))), str(list(b.values())[0][1:]), visited_dfs, proccessed_dfs, max_processed_depth
+            return True, str(next(iter(b.keys()))), str(
+                list(b.values())[0][1:]), visited_dfs, proccessed_dfs, max_processed_depth
 
         # Sprawdza czy nie przekroczono głębokości
         all_steps = list(b.values())[0]
@@ -30,6 +32,6 @@ def dfs(order, board_dict):
             max_processed_depth = max_depth
             continue
 
-        temporary_alghorithm(order, b, stack, visited_dfs, 0)
+        temporary_algorithm(order, b, stack, visited_dfs, 0, True)
 
     return False, '', '-1', visited_dfs, proccessed_dfs, max_processed_depth

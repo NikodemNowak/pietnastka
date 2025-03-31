@@ -40,6 +40,7 @@ def a_star(heuristics, board_dict):
 
     priority = heuristics(next(iter(board_dict.keys()))) + len(list(board_dict.values())[0]) - 1
 
+    visited_a_star.add(next(iter(board_dict.keys())))
     queue_a_star.put((priority, additional_counter[0], board_dict))  # Dodaje do kolejki z priorytetem
     additional_counter[0] += 1
 
@@ -55,7 +56,7 @@ def a_star(heuristics, board_dict):
         if check_board(next(iter(b.keys()))) == 0:
             return True, str(next(iter(b.keys()))), str(list(b.values())[0][1:]), visited_a_star, processed_a_star, max_processed_depth
 
-        temporary_alghorithm(heuristics, b, queue_a_star, visited_a_star,additional_counter)
+        temporary_algorithm(heuristics, b, queue_a_star, visited_a_star, additional_counter, False)
 
 
     return False, '', '-1', visited_a_star, processed_a_star, max_depth
