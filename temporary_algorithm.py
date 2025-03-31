@@ -4,16 +4,15 @@ from queue import Queue, PriorityQueue
 
 
 def temporary_alghorithm(order_or_heuristic, board_dict, algorithm_structure, algorithm_visited, additional_counter):
+
     x = where_zero(next(iter(board_dict.keys())))
     board_moves = []
-    all_steps = list(board_dict.values())[0]  # Pobranie pierwszej wartości słownika
 
-    # len - 1, bo all_steps zawiera krok 0 czyli poczatkowa plansze
+    # Pobranie pierwszej wartości słownika
+    all_steps = list(board_dict.values())[0]
 
-    # TODO: ZAPYTAJ DLA KTÓRYCH MAX GŁĘBOKOŚCI MA BYĆ
-    if len(all_steps) - 1 == 20:
-        return
-    last_step = all_steps[-1]  # Pobranie ostatniego znaku
+    # Pobranie ostatniego znaku
+    last_step = all_steps[-1]
 
     # Które ruchy są możliwe
     check_possible_move(x, last_step, board_moves)
@@ -21,8 +20,6 @@ def temporary_alghorithm(order_or_heuristic, board_dict, algorithm_structure, al
     if isinstance(order_or_heuristic, str):
         # Posortuje możliwe ruchy zgodnie z order
         board_moves = sorted(board_moves, key=lambda z: order_or_heuristic.index(z))
-
-
 
     for move in board_moves:
         if move == 'L':

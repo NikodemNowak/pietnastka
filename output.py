@@ -16,4 +16,4 @@ def write_stats(filename, found, path, visited, processed, max_processed_depth, 
         f.write(f"{len(visited)}\n")
         f.write(f"{processed}\n")
         f.write(f'{max_processed_depth}\n')
-        f.write(f"{time_taken*1000:.3f}\n")
+        f.write(f"{time_taken * 1000:.3f}\n")

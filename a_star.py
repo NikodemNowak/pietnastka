@@ -29,7 +29,7 @@ def manhattan_distance(board):
     return distance
 
 
-def a_star(heuristics, board_dict, start_time):
+def a_star(heuristics, board_dict):
 
     queue_a_star = PriorityQueue()
     visited_a_star = set()
@@ -53,9 +53,9 @@ def a_star(heuristics, board_dict, start_time):
             max_processed_depth = current_depth
 
         if check_board(next(iter(b.keys()))) == 0:
-            return True, str(next(iter(b.keys()))), str(list(b.values())[0][1:]), visited_a_star, processed_a_star, max_processed_depth, start_time
+            return True, str(next(iter(b.keys()))), str(list(b.values())[0][1:]), visited_a_star, processed_a_star, max_processed_depth
 
         temporary_alghorithm(heuristics, b, queue_a_star, visited_a_star,additional_counter)
 
 
-    return False, '', '-1', visited_a_star, processed_a_star, max_depth, start_time
+    return False, '', '-1', visited_a_star, processed_a_star, max_depth

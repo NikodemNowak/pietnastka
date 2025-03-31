@@ -145,7 +145,7 @@ def is_in_set(hash_param, visited):
     else:
         return False
 
-def summary_info(is_ok, final_board, steps, visited, processed, max_processed_depth, start_time):
+def summary_info(is_ok, final_board, steps, visited, processed, max_processed_depth, time_taken):
     if is_ok:
         print("Znaleziono rozwiązanie: " + final_board + " z krokiem: " + steps)
         print("Ilość kroków: " + str(len(steps)))
@@ -156,5 +156,5 @@ def summary_info(is_ok, final_board, steps, visited, processed, max_processed_de
     print("Ilość odwiedzonych stanów: " + str(len(visited)))
     print("Ilość przetworzonych stanów: " + str(processed))
     print("Maksymalna głębokość przetworzonych stanów: " + str(max_processed_depth))
-    print(f"Czas wykonania: {(time.time() - start_time) * 1000:.3f} milisekund")
+    print(f"Czas wykonania: {time_taken*1000:.3f} milisekund")
     return

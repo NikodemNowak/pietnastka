@@ -1,5 +1,6 @@
 import re
 import sys
+import time
 
 from bfs import *
 from dfs import *
@@ -50,29 +51,33 @@ def check(strategy, param, input_file, solution_output_file, stats_output_file):
 
 def run(strategy, param, board_dict, solution_output_file, stats_output_file):
 
-    found, final_board, path, visited, processed, max_processed_depth, start_time = False, "", "", set(),0, 0, 0
+    found, final_board, path, visited, processed, max_processed_depth = False, "", "", set(),0, 0
 
     if strategy == 'bfs':
         print("Rozpoczynam przeszukiwanie BFS z parametrem: " + param)
-        found, final_board, path, visited, processed, start_time = bfs(param, board_dict, time.time())
+        start_time = time.perf_counter()
+        found, final_board, path, visited, processed= bfs(param, board_dict)
         max_processed_depth =  str(len(path))
     elif strategy == 'dfs':
         print("Rozpoczynam przeszukiwanie DFS z parametrem: " + param)
-        found, final_board, path, visited, processed, max_processed_depth, start_time = dfs(param, board_dict, time.time())
+        start_time = time.perf_counter()
+        found, final_board, path, visited, processed, max_processed_depth = dfs(param, board_dict)
     elif strategy == 'astr':
         print("Rozpoczynam przeszukiwanie A* z parametrem: " + param)
         if param == 'hamm':
-            found, final_board, path, visited, processed, max_processed_depth, start_time = a_star(hamming_distance, board_dict, time.time())
+            start_time = time.perf_counter()
+            found, final_board, path, visited, processed, max_processed_depth = a_star(hamming_distance, board_dict)
         else:
-            found, final_board, path, visited, processed, max_processed_depth, start_time = a_star(manhattan_distance, board_dict, time.time())
+            start_time = time.perf_counter()
+            found, final_board, path, visited, processed, max_processed_depth = a_star(manhattan_distance, board_dict)
     else:
         print(f"Unknown strategy: {strategy}")
         sys.exit(1)
 
     # Write output files
+    time_taken = time.perf_counter() - start_time
     write_solution(solution_output_file, found, path)
-    time_taken = time.time() - start_time
     write_stats(stats_output_file, found, path, visited, processed, max_processed_depth, time_taken)
 
     # Print summary
-    summary_info(found, final_board, path, visited, processed, max_processed_depth, start_time)
+    summary_info(found, final_board, path, visited, processed, max_processed_depth, time_taken)
