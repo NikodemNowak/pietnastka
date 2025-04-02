@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib.ticker import LogLocator, ScalarFormatter, FuncFormatter
+from matplotlib.ticker import LogLocator, FuncFormatter
 import os
 import glob
 
@@ -53,7 +53,7 @@ def read_data():
 # BFS (dla wszystkich porządków przeszukiwania łącznie),
 # DFS (dla wszystkich porządków przeszukiwania łącznie)
 # oraz A* (dla obu heurystyk łącznie) względem głębokości rozwiązania
-def plot_data1(df, column):
+def plot_data1(df, column, ax):
     data = df[['Depth_Of_Moves', 'Algorithm', column]].copy()
 
     # Zamiana "astr" na "A*"
@@ -72,7 +72,6 @@ def plot_data1(df, column):
     # Szerokość słupka
     bar_width = 0.25
 
-    plt.figure(figsize=(12, 7))
 
     # Tworzenie indeksów dla pozycji słupków
     positions = np.arange(len(depths))
@@ -90,78 +89,67 @@ def plot_data1(df, column):
         # Rysowanie słupków z przesunięciem
         offset = (i - 1) * bar_width
         label_text = algorithm if algorithm == "A*" else algorithm.upper()
-        plt.bar(positions + offset, values, width=bar_width, label=label_text)
+        ax.bar(positions + offset, values, width=bar_width, label=label_text)
 
     # Dodawanie etykiet i legendy
-    plt.xlabel('Głębokość rozwiązania')
+    ax.set_xlabel('Głębokość rozwiązania')
     match column:
         case 'Steps':
-            plt.ylabel('Średnia liczba kroków')
-            plt.title('Średnia liczba kroków w zależności od głębokości rozwiązania')
+            ax.set_ylabel('Średnia liczba kroków')
+            ax.set_title('Średnia liczba kroków w zależności od głębokości rozwiązania')
         case 'Visited':
-            plt.ylabel('Średnia liczba odwiedzonych stanów')
-            plt.title('Średnia liczba odwiedzonych stanów w zależności od głębokości rozwiązania')
+            ax.set_ylabel('Średnia liczba odwiedzonych stanów')
+            ax.set_title('Średnia liczba odwiedzonych stanów w zależności od głębokości rozwiązania')
         case 'Processed':
-            plt.ylabel('Średnia liczba przetworzonych stanów')
-            plt.title('Średnia liczba przetworzonych stanów w zależności od głębokości rozwiązania')
+            ax.set_ylabel('Średnia liczba przetworzonych stanów')
+            ax.set_title('Średnia liczba przetworzonych stanów w zależności od głębokości rozwiązania')
         case 'Max_Algo_Depth':
-            plt.ylabel('Średnia maksymalna głębokość algorytmu')
-            plt.title('Średnia lmaksymalna głębokość algorytmu w zależności od głębokości rozwiązania')
+            ax.set_ylabel('Średnia maksymalna głębokość algorytmu')
+            ax.set_title('Średnia lmaksymalna głębokość algorytmu w zależności od głębokości rozwiązania')
         case 'Time':
-            plt.ylabel('Średni czas wykonania [ms]')
-            plt.title('Średni czas wykonania w zależności od głębokości rozwiązania')
+            ax.set_ylabel('Średni czas wykonania [ms]')
+            ax.set_title('Średni czas wykonania w zależności od głębokości rozwiązania')
         case _:
             raise ValueError('Nieznana kolumna' + column)
 
-    plt.xticks(positions, depths)
-    plt.legend()
-    plt.grid(axis='y')
+    ax.set_xticks(positions, depths)
+    ax.legend()
+    ax.grid(axis='y')
 
-    # plt.yscale('log')
-    # # Ustawienie znaczników tylko na potęgach 10
-    # plt.gca().yaxis.set_major_locator(LogLocator(base=10))
-    # # Usunięcie mniejszych podziałek
-    # plt.gca().yaxis.set_minor_locator(LogLocator(base=10, subs=()))
-    #
-    # # Formatowanie etykiet
-    # formatter = ScalarFormatter()
-    # formatter.set_scientific(False)
-    # Po ustawieniu skali logarytmicznej:
-    plt.yscale('log')
+    ax.set_yscale('log')
 
     # Automatyczne dopasowanie do danych
-    plt.autoscale(enable=True, axis='y')
+    ax.autoscale(enable=True, axis='y')
 
     # Pobranie obecnych granic
-    ymin, ymax = plt.ylim()
+    ymin, ymax = ax.get_ylim()
 
     # Rozszerzenie granic o +/- 1 potęgę 10
     log_ymin = np.floor(np.log10(ymin)) - 1  # Jedna potęga niżej
     log_ymax = np.ceil(np.log10(ymax)) + 1  # Jedna potęga wyżej
 
     # Ustawienie nowych granic
-    plt.ylim(10 ** log_ymin, 10 ** log_ymax)
+    ax.set_ylim(10 ** log_ymin, 10 ** log_ymax)
 
     # Ustawienie znaczników tylko na potęgach 10
-    plt.gca().yaxis.set_major_locator(LogLocator(base=10))
-    # Usunięcie mniejszych podziałek
-    plt.gca().yaxis.set_minor_locator(LogLocator(base=10, subs=()))
+    ax.yaxis.set_major_locator(LogLocator(base=10))
+    ax.yaxis.set_minor_locator(LogLocator(base=10, subs=()))
 
     # Formatowanie etykiet
     def log_format(value, pos):
         exponent = int(np.log10(value))
         return f'$10^{{{exponent}}}$'
 
-    plt.gca().yaxis.set_major_formatter(FuncFormatter(log_format))
-    plt.tight_layout()
-    plt.show()
+    ax.yaxis.set_major_formatter(FuncFormatter(log_format))
+
+    return ax
 
 # średnie arytmetyczne wyznaczone dla strategii BFS względem głębokości rozwiązania
 # z podziałem na poszczególne porządki przeszukiwania
 
 # średnie arytmetyczne wyznaczone dla strategii DFS względem głębokości rozwiązania
 # z podziałem na poszczególne porządki przeszukiwania;
-def plot_data2(algorithm, df, column):
+def plot_data2(algorithm, df, column, ax):
     data = df.copy()
 
     # Zamiana "astr" na "A*" dla wyświetlania
@@ -186,7 +174,6 @@ def plot_data2(algorithm, df, column):
     # Szerokość słupka
     bar_width = 0.25 if len(variants) <= 4 else 0.05
 
-    plt.figure(figsize=(12, 7))
     positions = np.arange(len(depths))
 
     # Dostosowanie tytułu i etykiet do typu algorytmu
@@ -200,78 +187,85 @@ def plot_data2(algorithm, df, column):
         values = [column_by_depth.get(depth, 0) for depth in depths]
 
         offset = (i - len(variants) / 2 + 0.5) * bar_width
-        plt.bar(positions + offset, values, width=bar_width, label=variant.upper())
+        ax.bar(positions + offset, values, width=bar_width, label=variant.upper())
 
     # Dodawanie etykiet i legendy
-    plt.xlabel('Głębokość rozwiązania')
+    ax.set_xlabel('Głębokość rozwiązania')
     match column:
         case 'Steps':
-            plt.ylabel(f'Średnia liczba kroków dla {display_name}')
-            plt.title(f'{display_name} - średnia liczba kroków w zależności od {param_type}')
+            ax.set_ylabel(f'Średnia liczba kroków dla {display_name}')
+            ax.set_title(f'{display_name} - średnia liczba kroków w zależności od {param_type}')
         case 'Visited':
-            plt.ylabel(f'Średnia liczba odwiedzonych stanów dla {display_name}')
-            plt.title(f'{display_name} - średnia liczba odwiedzonych stanów w zależności od {param_type}')
+            ax.set_ylabel(f'Średnia liczba odwiedzonych stanów dla {display_name}')
+            ax.set_title(f'{display_name} - średnia liczba odwiedzonych stanów w zależności od {param_type}')
         case 'Processed':
-            plt.ylabel(f'Średnia liczba przetworzonych stanów dla {display_name}')
-            plt.title(f'{display_name} - średnia liczba przetworzonych stanów w zależności od {param_type}')
+            ax.set_ylabel(f'Średnia liczba przetworzonych stanów dla {display_name}')
+            ax.set_title(f'{display_name} - średnia liczba przetworzonych stanów w zależności od {param_type}')
         case 'Max_Algo_Depth':
-            plt.ylabel(f'Średnia maksymalna głębokość algorytmu dla {display_name}')
-            plt.title(f'{display_name} - średnia maksymalna głębokość algorytmu w zależności od {param_type}')
+            ax.set_ylabel(f'Średnia maksymalna głębokość algorytmu dla {display_name}')
+            ax.set_title(f'{display_name} - średnia maksymalna głębokość algorytmu w zależności od {param_type}')
         case 'Time':
-            plt.ylabel(f'Średni czas wykonania [ms] dla {display_name}')
-            plt.title(f'{display_name} - średni czas wykonania w zależności od {param_type}')
+            ax.set_ylabel(f'Średni czas wykonania [ms] dla {display_name}')
+            ax.set_title(f'{display_name} - średni czas wykonania w zależności od {param_type}')
         case _:
             raise ValueError('Nieznana kolumna' + column)
 
-    plt.xticks(positions, depths)
-    plt.legend()
-    plt.grid(axis='y')
+    ax.set_xticks(positions)
+    ax.set_xticklabels(depths)
+    ax.legend()
+    ax.grid(axis='y')
 
-    plt.yscale('log')
-    # # Ustawienie znaczników tylko na potęgach 10
-    # plt.gca().yaxis.set_major_locator(LogLocator(base=10))
-    # # Usunięcie mniejszych podziałek
-    # plt.gca().yaxis.set_minor_locator(LogLocator(base=10, subs=()))
-    #
-    # # Formatowanie etykiet
-    # formatter = ScalarFormatter()
-    # formatter.set_scientific(False)
-    # Po ustawieniu skali logarytmicznej:
-    plt.yscale('log')
+    ax.set_yscale('log')
 
     # Automatyczne dopasowanie do danych
-    plt.autoscale(enable=True, axis='y')
+    ax.autoscale(enable=True, axis='y')
 
     # Pobranie obecnych granic
-    ymin, ymax = plt.ylim()
+    ymin, ymax = ax.get_ylim()
 
     # Rozszerzenie granic o +/- 1 potęgę 10
     log_ymin = np.floor(np.log10(ymin)) - 1  # Jedna potęga niżej
     log_ymax = np.ceil(np.log10(ymax)) + 1  # Jedna potęga wyżej
 
     # Ustawienie nowych granic
-    plt.ylim(10 ** log_ymin, 10 ** log_ymax)
+    ax.set_ylim(10 ** log_ymin, 10 ** log_ymax)
 
-    # Ustawienie znaczników tylko na potęgach 10
-    plt.gca().yaxis.set_major_locator(LogLocator(base=10))
-    # Usunięcie mniejszych podziałek
-    plt.gca().yaxis.set_minor_locator(LogLocator(base=10, subs=()))
+    ax.yaxis.set_major_locator(LogLocator(base=10))
+    ax.yaxis.set_minor_locator(LogLocator(base=10, subs=()))
 
     # Formatowanie etykiet
     def log_format(value, pos):
         exponent = int(np.log10(value))
         return f'$10^{{{exponent}}}$'
 
-    plt.gca().yaxis.set_major_formatter(FuncFormatter(log_format))
-    plt.tight_layout()
-    plt.show()
+    ax.yaxis.set_major_formatter(FuncFormatter(log_format))
+
+    return ax
+
+
+def create_analysis_figures(data):
+    params = ['Steps', 'Visited', 'Processed', 'Max_Algo_Depth', 'Time']
+    figures = []
+
+    for param in params:
+        # Tworzenie figury z 4 wykresami (2x2)
+        fig, axs = plt.subplots(2, 2, figsize=(15, 12))
+
+        # Pierwszy wykres: porównanie algorytmów
+        plot_data1(data, param, axs[0, 0])
+
+        # Pozostałe wykresy: szczegóły dla każdego algorytmu
+        plot_data2('astr', data, param, axs[0, 1])
+        plot_data2('bfs', data, param, axs[1, 0])
+        plot_data2('dfs', data, param, axs[1, 1])
+
+        fig.suptitle(f'Analiza algorytmów wg parametru: {param}', fontsize=16)
+        fig.tight_layout()
+        figures.append(fig)
+
+    return figures
 
 loaded_data = read_data()
+all_figures = create_analysis_figures(loaded_data)
+plt.show()
 
-params = ['Steps', 'Visited', 'Processed', 'Max_Algo_Depth', 'Time']
-
-for param in params:
-    plot_data1(loaded_data, param)
-    plot_data2('bfs', loaded_data, param)
-    plot_data2('dfs', loaded_data, param)
-    plot_data2('astr', loaded_data, param)
