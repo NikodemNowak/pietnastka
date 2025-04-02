@@ -72,6 +72,8 @@ def plot_data1(df, column, ax):
     # Szerokość słupka
     bar_width = 0.25
 
+    ax.tick_params(axis='both', which='major', labelsize=14)
+
 
     # Tworzenie indeksów dla pozycji słupków
     positions = np.arange(len(depths))
@@ -92,23 +94,22 @@ def plot_data1(df, column, ax):
         ax.bar(positions + offset, values, width=bar_width, label=label_text)
 
     # Dodawanie etykiet i legendy
-    ax.set_xlabel('Głębokość rozwiązania')
     match column:
         case 'Steps':
-            ax.set_ylabel('Średnia liczba kroków')
-            ax.set_title('Średnia liczba kroków w zależności od głębokości rozwiązania')
+            ax.set_ylabel('Średnia liczba kroków', fontsize=16)
+            ax.set_title('Ogółem', fontsize=16)
         case 'Visited':
-            ax.set_ylabel('Średnia liczba odwiedzonych stanów')
-            ax.set_title('Średnia liczba odwiedzonych stanów w zależności od głębokości rozwiązania')
+            ax.set_ylabel('Średnia liczba odwiedzonych stanów', fontsize=16)
+            ax.set_title('Ogółem', fontsize=16)
         case 'Processed':
-            ax.set_ylabel('Średnia liczba przetworzonych stanów')
-            ax.set_title('Średnia liczba przetworzonych stanów w zależności od głębokości rozwiązania')
+            ax.set_ylabel('Średnia liczba przetworzonych stanów', fontsize=16)
+            ax.set_title('Ogółem', fontsize=16)
         case 'Max_Algo_Depth':
-            ax.set_ylabel('Średnia maksymalna głębokość algorytmu')
-            ax.set_title('Średnia lmaksymalna głębokość algorytmu w zależności od głębokości rozwiązania')
+            ax.set_ylabel('Średnia max głębokość algorytmu', fontsize=16)
+            ax.set_title('Ogółem', fontsize=16)
         case 'Time':
-            ax.set_ylabel('Średni czas wykonania [ms]')
-            ax.set_title('Średni czas wykonania w zależności od głębokości rozwiązania')
+            ax.set_ylabel('Średni czas wykonania [ms]', fontsize=16)
+            ax.set_title('Ogółem', fontsize=16)
         case _:
             raise ValueError('Nieznana kolumna' + column)
 
@@ -149,7 +150,7 @@ def plot_data1(df, column, ax):
 
 # średnie arytmetyczne wyznaczone dla strategii DFS względem głębokości rozwiązania
 # z podziałem na poszczególne porządki przeszukiwania;
-def plot_data2(algorithm, df, column, ax):
+def plot_data2(algorithm, df, column, ax, x_label_ok, y_label_ok):
     data = df.copy()
 
     # Zamiana "astr" na "A*" dla wyświetlania
@@ -179,6 +180,11 @@ def plot_data2(algorithm, df, column, ax):
     # Dostosowanie tytułu i etykiet do typu algorytmu
     param_type = "heurystyki" if algorithm == "astr" else "porządku przeszukiwania"
 
+    # Zwiększ trzcionkę na tym ax
+    ax.tick_params(axis='both', which='major', labelsize=14)
+
+
+
     # Rysowanie słupków dla każdego wariantu
     for i, variant in enumerate(variants):
         subset = grouped_data[grouped_data['Heuristic/Order'] == variant]
@@ -190,23 +196,29 @@ def plot_data2(algorithm, df, column, ax):
         ax.bar(positions + offset, values, width=bar_width, label=variant.upper())
 
     # Dodawanie etykiet i legendy
-    ax.set_xlabel('Głębokość rozwiązania')
+    if x_label_ok:
+        ax.set_xlabel('Głębokość rozwiązania',fontsize=16)
     match column:
         case 'Steps':
-            ax.set_ylabel(f'Średnia liczba kroków dla {display_name}')
-            ax.set_title(f'{display_name} - średnia liczba kroków w zależności od {param_type}')
+            if y_label_ok:
+                ax.set_ylabel('Średnia liczba kroków', fontsize=16)
+            ax.set_title(f'{display_name}', fontsize=16)
         case 'Visited':
-            ax.set_ylabel(f'Średnia liczba odwiedzonych stanów dla {display_name}')
-            ax.set_title(f'{display_name} - średnia liczba odwiedzonych stanów w zależności od {param_type}')
+            if y_label_ok:
+                ax.set_ylabel('Średnia liczba odwiedzonych stanów', fontsize=16)
+            ax.set_title(f'{display_name}', fontsize=16)
         case 'Processed':
-            ax.set_ylabel(f'Średnia liczba przetworzonych stanów dla {display_name}')
-            ax.set_title(f'{display_name} - średnia liczba przetworzonych stanów w zależności od {param_type}')
+            if y_label_ok:
+                ax.set_ylabel('Średnia liczba przetworzonych stanów', fontsize=16)
+            ax.set_title(f'{display_name}', fontsize=16)
         case 'Max_Algo_Depth':
-            ax.set_ylabel(f'Średnia maksymalna głębokość algorytmu dla {display_name}')
-            ax.set_title(f'{display_name} - średnia maksymalna głębokość algorytmu w zależności od {param_type}')
+            if y_label_ok:
+                ax.set_ylabel('Średnia maksymalna głębokość algorytmu', fontsize=16)
+            ax.set_title(f'{display_name}', fontsize=16)
         case 'Time':
-            ax.set_ylabel(f'Średni czas wykonania [ms] dla {display_name}')
-            ax.set_title(f'{display_name} - średni czas wykonania w zależności od {param_type}')
+            if y_label_ok:
+                ax.set_ylabel('Średni czas wykonania [ms]', fontsize=16)
+            ax.set_title(f'{display_name}', fontsize=16)
         case _:
             raise ValueError('Nieznana kolumna' + column)
 
@@ -255,11 +267,11 @@ def create_analysis_figures(data):
         plot_data1(data, param, axs[0, 0])
 
         # Pozostałe wykresy: szczegóły dla każdego algorytmu
-        plot_data2('astr', data, param, axs[0, 1])
-        plot_data2('bfs', data, param, axs[1, 0])
-        plot_data2('dfs', data, param, axs[1, 1])
+        plot_data2('astr', data, param, axs[0, 1], False, False)
+        plot_data2('bfs', data, param, axs[1, 0], True, True)
+        plot_data2('dfs', data, param, axs[1, 1], True, False)
 
-        fig.suptitle(f'Analiza algorytmów wg parametru: {param}', fontsize=16)
+
         fig.tight_layout()
         figures.append(fig)
 
