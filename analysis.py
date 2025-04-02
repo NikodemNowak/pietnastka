@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.ticker import LogLocator, ScalarFormatter, FuncFormatter
 import os
 import glob
 
@@ -62,7 +63,7 @@ def plot_data1(df, column):
     grouped_data = data.groupby(['Algorithm', 'Depth_Of_Moves']).mean().reset_index()
 
     # Zaokrąglanie wartości Steps do całości
-    grouped_data[column] = grouped_data[column].round().astype(int)
+    grouped_data[column] = grouped_data[column].round(3)
 
     # Unikalne wartości głębokości
     depths = sorted(grouped_data['Depth_Of_Moves'].unique())
@@ -116,16 +117,42 @@ def plot_data1(df, column):
     plt.legend()
     plt.grid(axis='y')
 
-    # Dodawanie wartości nad słupkami
-    for i, algorithm in enumerate(algorithms):
-        subset = grouped_data[grouped_data['Algorithm'] == algorithm]
-        offset = (i - 1) * bar_width
+    # plt.yscale('log')
+    # # Ustawienie znaczników tylko na potęgach 10
+    # plt.gca().yaxis.set_major_locator(LogLocator(base=10))
+    # # Usunięcie mniejszych podziałek
+    # plt.gca().yaxis.set_minor_locator(LogLocator(base=10, subs=()))
+    #
+    # # Formatowanie etykiet
+    # formatter = ScalarFormatter()
+    # formatter.set_scientific(False)
+    # Po ustawieniu skali logarytmicznej:
+    plt.yscale('log')
 
-        for j, depth in enumerate(depths):
-            if depth in subset['Depth_Of_Moves'].values:
-                value = subset[subset['Depth_Of_Moves'] == depth][column].values[0]
-                plt.text(j + offset, value + 0.5, str(value), ha='center')
+    # Automatyczne dopasowanie do danych
+    plt.autoscale(enable=True, axis='y')
 
+    # Pobranie obecnych granic
+    ymin, ymax = plt.ylim()
+
+    # Rozszerzenie granic o +/- 1 potęgę 10
+    log_ymin = np.floor(np.log10(ymin)) - 1  # Jedna potęga niżej
+    log_ymax = np.ceil(np.log10(ymax)) + 1  # Jedna potęga wyżej
+
+    # Ustawienie nowych granic
+    plt.ylim(10 ** log_ymin, 10 ** log_ymax)
+
+    # Ustawienie znaczników tylko na potęgach 10
+    plt.gca().yaxis.set_major_locator(LogLocator(base=10))
+    # Usunięcie mniejszych podziałek
+    plt.gca().yaxis.set_minor_locator(LogLocator(base=10, subs=()))
+
+    # Formatowanie etykiet
+    def log_format(value, pos):
+        exponent = int(np.log10(value))
+        return f'$10^{{{exponent}}}$'
+
+    plt.gca().yaxis.set_major_formatter(FuncFormatter(log_format))
     plt.tight_layout()
     plt.show()
 
@@ -150,7 +177,7 @@ def plot_data2(algorithm, df, column):
     grouped_data = filtered_data.groupby(['Heuristic/Order', 'Depth_Of_Moves']).mean().reset_index()
 
     # Zaokrąglanie wartości Steps
-    grouped_data[column] = grouped_data[column].round().astype(int)
+    grouped_data[column] = grouped_data[column].round(3)
 
     # Unikalne wartości
     depths = sorted(grouped_data['Depth_Of_Moves'].unique())
@@ -169,8 +196,8 @@ def plot_data2(algorithm, df, column):
     for i, variant in enumerate(variants):
         subset = grouped_data[grouped_data['Heuristic/Order'] == variant]
 
-        steps_by_depth = {row['Depth_Of_Moves']: row[column] for _, row in subset.iterrows()}
-        values = [steps_by_depth.get(depth, 0) for depth in depths]
+        column_by_depth = {row['Depth_Of_Moves']: row[column] for _, row in subset.iterrows()}
+        values = [column_by_depth.get(depth, 0) for depth in depths]
 
         offset = (i - len(variants) / 2 + 0.5) * bar_width
         plt.bar(positions + offset, values, width=bar_width, label=variant.upper())
@@ -185,13 +212,13 @@ def plot_data2(algorithm, df, column):
             plt.ylabel(f'Średnia liczba odwiedzonych stanów dla {display_name}')
             plt.title(f'{display_name} - średnia liczba odwiedzonych stanów w zależności od {param_type}')
         case 'Processed':
-            plt.ylabel('Średnia liczba przetworzonych stanów dla {display_name}')
+            plt.ylabel(f'Średnia liczba przetworzonych stanów dla {display_name}')
             plt.title(f'{display_name} - średnia liczba przetworzonych stanów w zależności od {param_type}')
         case 'Max_Algo_Depth':
-            plt.ylabel('Średnia maksymalna głębokość algorytmu dla {display_name}')
+            plt.ylabel(f'Średnia maksymalna głębokość algorytmu dla {display_name}')
             plt.title(f'{display_name} - średnia maksymalna głębokość algorytmu w zależności od {param_type}')
         case 'Time':
-            plt.ylabel('Średni czas wykonania [ms] dla {display_name}')
+            plt.ylabel(f'Średni czas wykonania [ms] dla {display_name}')
             plt.title(f'{display_name} - średni czas wykonania w zależności od {param_type}')
         case _:
             raise ValueError('Nieznana kolumna' + column)
@@ -200,6 +227,42 @@ def plot_data2(algorithm, df, column):
     plt.legend()
     plt.grid(axis='y')
 
+    plt.yscale('log')
+    # # Ustawienie znaczników tylko na potęgach 10
+    # plt.gca().yaxis.set_major_locator(LogLocator(base=10))
+    # # Usunięcie mniejszych podziałek
+    # plt.gca().yaxis.set_minor_locator(LogLocator(base=10, subs=()))
+    #
+    # # Formatowanie etykiet
+    # formatter = ScalarFormatter()
+    # formatter.set_scientific(False)
+    # Po ustawieniu skali logarytmicznej:
+    plt.yscale('log')
+
+    # Automatyczne dopasowanie do danych
+    plt.autoscale(enable=True, axis='y')
+
+    # Pobranie obecnych granic
+    ymin, ymax = plt.ylim()
+
+    # Rozszerzenie granic o +/- 1 potęgę 10
+    log_ymin = np.floor(np.log10(ymin)) - 1  # Jedna potęga niżej
+    log_ymax = np.ceil(np.log10(ymax)) + 1  # Jedna potęga wyżej
+
+    # Ustawienie nowych granic
+    plt.ylim(10 ** log_ymin, 10 ** log_ymax)
+
+    # Ustawienie znaczników tylko na potęgach 10
+    plt.gca().yaxis.set_major_locator(LogLocator(base=10))
+    # Usunięcie mniejszych podziałek
+    plt.gca().yaxis.set_minor_locator(LogLocator(base=10, subs=()))
+
+    # Formatowanie etykiet
+    def log_format(value, pos):
+        exponent = int(np.log10(value))
+        return f'$10^{{{exponent}}}$'
+
+    plt.gca().yaxis.set_major_formatter(FuncFormatter(log_format))
     plt.tight_layout()
     plt.show()
 
